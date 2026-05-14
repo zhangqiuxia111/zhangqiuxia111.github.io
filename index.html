@@ -3,336 +3,280 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Nexus Heritage | Global AI Collaborative Engine</title>
+    <title>Nexus Edu | AI Heritage STEAM Platform</title>
     <style>
-        /* ================= 核心系统变量 (Enterprise Design System) ================= */
+        /* ================= 核心系统变量与重置 ================= */
         :root {
-            --bg-base: #050505;
-            --bg-surface: #121212;
-            --bg-surface-hover: #1a1a1a;
-            --border-color: rgba(255, 255, 255, 0.08);
-            --text-primary: #ffffff;
-            --text-secondary: #888888;
-            --accent-blue: #0066FF;
-            --accent-purple: #8A2BE2;
-            --accent-green: #00F5A0;
-            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
-            --radius-lg: 24px;
-            --radius-md: 16px;
-            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+            --bg: #000000;
+            --surface: #0a0a0c;
+            --border: rgba(255, 255, 255, 0.08);
+            --text-main: #ededed;
+            --text-muted: #888;
+            --accent: #00f3ff; /* 科技青色 */
+            --accent-glow: rgba(0, 243, 255, 0.4);
+            --font-sans: 'Inter', -apple-system, sans-serif;
+            --font-mono: 'JetBrains Mono', monospace;
         }
-
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: var(--font-sans); background-color: var(--bg-base);
-            color: var(--text-primary); line-height: 1.6; overflow-x: hidden;
-            -webkit-font-smoothing: antialiased;
+            font-family: var(--font-sans); background: var(--bg); color: var(--text-main);
+            overflow-x: hidden; scroll-behavior: smooth;
+        }
+        
+        /* ================= 全局动态背景特效 ================= */
+        .bg-grid {
+            position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: -2;
+            background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+            background-size: 50px 50px; opacity: 0.2;
+            transform: perspective(500px) rotateX(60deg) translateY(-100px) translateZ(-200px);
+            animation: gridMove 20s linear infinite;
+        }
+        @keyframes gridMove { 0% { transform: perspective(500px) rotateX(60deg) translateY(0) translateZ(-200px); } 100% { transform: perspective(500px) rotateX(60deg) translateY(50px) translateZ(-200px); } }
+
+        .ambient-light {
+            position: fixed; width: 60vw; height: 60vw; border-radius: 50%;
+            background: radial-gradient(circle, rgba(0,243,255,0.15), transparent 70%);
+            top: -20%; left: -10%; filter: blur(90px); z-index: -1; pointer-events: none;
         }
 
-        /* 背景流光特效 */
-        .ambient-glow {
-            position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw;
-            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
-            filter: blur(80px); z-index: -1; pointer-events: none;
-        }
-        .ambient-glow.right {
-            top: 40%; left: 60%;
-            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 60%);
-        }
-
-        /* 顶部导航 - 国际化与控制台风格 */
+        /* ================= 导航与科普数据跑马灯 ================= */
         nav {
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 20px 40px; border-bottom: 1px solid var(--border-color);
-            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
-            position: sticky; top: 0; z-index: 100;
+            padding: 20px 40px; display: flex; justify-content: space-between; align-items: center;
+            border-bottom: 1px solid var(--border); backdrop-filter: blur(10px); position: fixed; width: 100%; z-index: 100;
         }
-        .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px;}
-        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 6px; }
-        .nav-controls { display: flex; gap: 20px; align-items: center; }
-        .lang-switch {
-            background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
-            padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
-            transition: var(--transition-smooth);
-        }
-        .lang-switch:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+        .logo { font-weight: 700; letter-spacing: 1px; font-size: 1.2rem; display: flex; align-items: center; gap: 10px;}
+        .lang-btn { background: rgba(255,255,255,0.05); color: #fff; border: 1px solid var(--border); padding: 8px 16px; border-radius: 20px; cursor: pointer; transition: 0.3s; }
+        .lang-btn:hover { background: #fff; color: #000; }
 
-        /* 英雄区域 (Hero Section) */
-        header { padding: 100px 40px 60px; text-align: center; max-width: 1000px; margin: 0 auto; }
-        .badge {
-            display: inline-block; padding: 6px 14px; border-radius: 100px;
-            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
-            font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 24px;
-            font-family: var(--font-mono);
-        }
-        h1 { font-size: 4.5rem; line-height: 1.1; letter-spacing: -2px; margin-bottom: 24px; }
-        h1 span {
-            background: linear-gradient(to right, #fff, #777);
-            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
-        }
-        .hero-desc { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+        .ticker-wrap { width: 100%; overflow: hidden; background: var(--surface); border-bottom: 1px solid var(--border); padding: 10px 0; margin-top: 73px; }
+        .ticker { display: inline-block; white-space: nowrap; animation: ticker 30s linear infinite; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); }
+        @keyframes ticker { 0% { transform: translate3d(0, 0, 0); } 100% { transform: translate3d(-50%, 0, 0); } }
 
-        /* ================= 核心工作台：Bento Box 网格系统 ================= */
-        .bento-grid {
-            display: grid; padding: 0 40px 100px; max-width: 1400px; margin: 0 auto;
-            grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(300px, auto); gap: 20px;
-        }
-        .bento-card {
-            background: var(--bg-surface); border: 1px solid var(--border-color);
-            border-radius: var(--radius-lg); padding: 30px; position: relative; overflow: hidden;
-            transition: var(--transition-smooth);
+        /* ================= 英雄区域 (Hero) ================= */
+        header { min-height: 90vh; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center; padding: 0 20px; }
+        .hero-badge { border: 1px solid var(--accent); color: var(--accent); padding: 6px 16px; border-radius: 20px; font-size: 0.85rem; margin-bottom: 30px; background: rgba(0,243,255,0.1); box-shadow: 0 0 20px var(--accent-glow); }
+        h1 { font-size: 5rem; letter-spacing: -2px; line-height: 1.1; margin-bottom: 20px; text-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+        .text-gradient { background: linear-gradient(to right, #fff, #888); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        p.desc { font-size: 1.2rem; color: var(--text-muted); max-width: 700px; margin-bottom: 40px; }
+        
+        /* 鼠标向下滑动提示动画 */
+        .scroll-down { width: 30px; height: 50px; border: 2px solid var(--text-muted); border-radius: 15px; position: relative; opacity: 0.5; }
+        .scroll-down::before { content: ''; position: absolute; top: 10px; left: 50%; transform: translateX(-50%); width: 4px; height: 8px; background: #fff; border-radius: 2px; animation: scrollBounce 2s infinite; }
+        @keyframes scrollBounce { 0%, 100% { transform: translate(-50%, 0); opacity: 1; } 50% { transform: translate(-50%, 15px); opacity: 0; } }
+
+        /* ================= 核心交互区：鼠标光晕卡片矩阵 ================= */
+        .content-section { max-width: 1400px; margin: 0 auto; padding: 100px 40px; }
+        .section-title { font-size: 2.5rem; margin-bottom: 50px; }
+        
+        .cards { display: grid; grid-template-columns: repeat(3, 1fr); gap: 20px; }
+        .card-wide { grid-column: span 2; }
+        
+        /* 神级特效：鼠标跟随发光边框与内阴影 */
+        .card {
+            background-color: rgba(255, 255, 255, 0.02);
+            border-radius: 20px;
+            padding: 30px;
+            position: relative;
             display: flex; flex-direction: column;
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            overflow: hidden;
         }
-        .bento-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
-        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
-        .card-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
-        .card-icon { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.8rem; }
-
-        /* Card 1: 核心 AI 引擎 (跨越 2x2 网格) */
-        .card-ai-engine { grid-column: span 2; grid-row: span 2; }
-        .workspace-area {
-            flex: 1; border: 1px dashed var(--border-color); border-radius: var(--radius-md);
-            display: flex; flex-direction: column; align-items: center; justify-content: center;
-            background: rgba(0,0,0,0.2); cursor: pointer; transition: var(--transition-smooth); position: relative;
-        }
-        .workspace-area:hover { background: rgba(255,255,255,0.02); border-color: var(--accent-blue); }
         
-        /* 终端风格的进度控制台 */
-        .terminal {
-            display: none; width: 100%; height: 100%; background: #000; border-radius: var(--radius-md);
-            padding: 20px; font-family: var(--font-mono); font-size: 0.85rem; color: #00F5A0;
-            overflow-y: auto; text-align: left; box-shadow: inset 0 0 20px rgba(0,245,160,0.1);
+        .card::before, .card::after {
+            content: ""; position: absolute; left: 0; top: 0; width: 100%; height: 100%;
+            border-radius: inherit; opacity: 0; transition: opacity 0.5s; pointer-events: none;
         }
-        .result-view {
-            display: none; width: 100%; height: 100%; border-radius: var(--radius-md);
-            background-size: cover; background-position: center; position: relative;
-        }
-        .deploy-btn {
-            position: absolute; bottom: 20px; right: 20px; background: #fff; color: #000;
-            border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;
-        }
-
-        /* Card 2: 全链路性能监控 (Shift-Left Telemetry) */
-        .card-telemetry { grid-column: span 1; grid-row: span 1; }
-        .metric-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-family: var(--font-mono); font-size: 0.85rem;}
-        .metric-label { color: var(--text-secondary); }
-        .metric-value.good { color: var(--accent-green); }
-        .chart-mock { height: 60px; width: 100%; background: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px); margin-top: auto; border-bottom: 1px solid var(--accent-blue); position: relative;}
-        .chart-line { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top right, transparent 50%, var(--accent-blue) 50.5%, transparent 51%); opacity: 0.5; }
-
-        /* Card 3: 全球流量与变现分析 (Monetization & Ads Growth) */
-        .card-monetization { grid-column: span 1; grid-row: span 1; }
-        .big-number { font-size: 2.5rem; font-weight: 700; margin-bottom: 5px; }
-        .trend-up { color: var(--accent-green); font-size: 0.85rem; font-family: var(--font-mono);}
-        .sub-text { color: var(--text-secondary); font-size: 0.85rem; }
+        /* 外发光边框 */
+        .card::before { background: radial-gradient(800px circle at var(--mouse-x) var(--mouse-y), rgba(255, 255, 255, 0.1), transparent 40%); z-index: 1; }
+        /* 内发光底色 */
+        .card::after { background: radial-gradient(600px circle at var(--mouse-x) var(--mouse-y), rgba(0, 243, 255, 0.06), transparent 40%); z-index: 0; }
+        .cards:hover .card::before { opacity: 1; }
+        .card:hover::after { opacity: 1; }
         
-        /* Card 4: 国际化供应链地图 */
-        .card-global-map { grid-column: span 2; grid-row: span 1; background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/></pattern><rect x="0" y="0" width="100%" height="100%" fill="url(%23dots)"/></svg>') var(--bg-surface); }
-        .node { width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; position: absolute; box-shadow: 0 0 15px var(--accent-blue); }
-        .node::after { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; border: 1px solid var(--accent-blue); animation: pulse 2s infinite; }
-        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
+        /* 卡片内部内容层级 */
+        .card > * { position: relative; z-index: 2; }
+        .card h3 { font-size: 1.2rem; margin-bottom: 10px; display: flex; justify-content: space-between;}
+        .card h3 span { font-size: 0.8rem; font-family: var(--font-mono); color: var(--accent); border: 1px solid var(--accent); padding: 2px 8px; border-radius: 10px; }
+        .card p { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 20px; }
 
-        @media (max-width: 1024px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } }
-        @media (max-width: 768px) { .bento-grid { grid-template-columns: 1fr; } h1 { font-size: 3rem; } }
+        .terminal-box { background: #000; border: 1px solid #333; border-radius: 10px; padding: 15px; font-family: var(--font-mono); font-size: 0.8rem; color: var(--accent); height: 150px; overflow-y: hidden; }
+        .data-row { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px dashed #333; font-family: var(--font-mono); font-size: 0.85rem;}
+        
+        .btn-glow { margin-top: auto; background: var(--text-main); color: #000; padding: 12px; border-radius: 10px; font-weight: bold; text-align: center; cursor: pointer; transition: 0.3s; border: none; }
+        .btn-glow:hover { box-shadow: 0 0 20px rgba(255,255,255,0.4); transform: scale(1.02); }
+
+        .reveal { opacity: 0; transform: translateY(50px); transition: all 0.8s cubic-bezier(0.16, 1, 0.3, 1); }
+        .reveal.active { opacity: 1; transform: translateY(0); }
+
+        @media (max-width: 1000px) { .cards { grid-template-columns: 1fr; } .card-wide { grid-column: span 1; } h1 { font-size: 3rem; } }
     </style>
 </head>
 <body>
 
-    <div class="ambient-glow"></div>
-    <div class="ambient-glow right"></div>
+    <!-- 动态网格背景 -->
+    <div class="bg-grid"></div>
+    <div class="ambient-light"></div>
 
     <nav>
-        <div class="logo">
-            <div class="logo-icon"></div>
-            <span id="navLogoText">Nexus Heritage</span>
-        </div>
-        <div class="nav-controls">
-            <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">EN / 中文</button>
-            <div style="width: 32px; height: 32px; border-radius: 50%; background: #333; border: 1px solid #555;"></div>
-        </div>
+        <div class="logo">✦ Nexus <span style="font-weight: 300; color: #888;">Edu</span></div>
+        <button class="lang-btn" id="langToggle">中 / EN</button>
     </nav>
 
-    <header>
-        <div class="badge" id="heroBadge">v2.0 · Core AI Engine Online</div>
-        <h1 id="heroTitle"><span>Empowering Heritage</span><br>with General AI.</h1>
-        <p class="hero-desc" id="heroDesc">An enterprise-grade platform connecting rural artisans with global markets through automated AI synthesis, real-time telemetry, and intelligent supply chain routing.</p>
+    <!-- 科普与教育数据流 -->
+    <div class="ticker-wrap">
+        <div class="ticker">
+            STEAM_CURRICULUM: SYNCED • ALGORITHMIC_THINKING_ASSESSMENT: ACTIVE • FRACTAL_GEOMETRY_IN_PAPER_CUTTING: VISUALIZED • COMPUTER_VISION_FOR_K12: DEPLOYED • RURAL_SCHOOL_NODE_01: CONNECTED • AI_LITERACY_SCORE: +42% • 
+            STEAM_CURRICULUM: SYNCED • ALGORITHMIC_THINKING_ASSESSMENT: ACTIVE • FRACTAL_GEOMETRY_IN_PAPER_CUTTING: VISUALIZED • COMPUTER_VISION_FOR_K12: DEPLOYED • RURAL_SCHOOL_NODE_01: CONNECTED • AI_LITERACY_SCORE: +42% •
+        </div>
+    </div>
+
+    <header class="reveal">
+        <div class="hero-badge" id="t-badge">STEAM Education Framework v3.0</div>
+        <h1 class="text-gradient" id="t-title">Decode Heritage. <br> Code the Future.</h1>
+        <p class="desc" id="t-desc">融合计算思维、人工智能算法与非遗文化底蕴。打造面向数字时代的跨学科（STEAM）科学教育与乡村科普协同平台。</p>
+        <div class="scroll-down"></div>
     </header>
 
-    <main class="bento-grid">
+    <main class="content-section">
+        <h2 class="section-title reveal text-gradient" id="t-arch">Educational Architecture</h2>
         
-        <!-- 模块 1: 核心 AIGC 引擎 (工程化流程) -->
-        <div class="bento-card card-ai-engine">
-            <div class="card-header">
-                <span class="card-title" id="aiTitle">Multimodal AIGC Engine</span>
-                <span class="card-icon">GPU-CLUSTER-01</span>
-            </div>
+        <div class="cards" id="cards">
             
-            <div class="workspace-area" id="workspace" onclick="startGeneration()">
-                <div id="uploadUI">
-                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 20px; color: var(--text-secondary);">
-                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
-                    </svg>
-                    <p style="color: var(--text-secondary); font-weight: 500;" id="uploadText">Click to upload raw asset / Image mapping</p>
-                </div>
-
-                <!-- 极客风终端输出 -->
-                <div class="terminal" id="terminal"></div>
-                
-                <!-- 结果与部署 -->
-                <div class="result-view" id="resultView" style="background-image: url('https://images.unsplash.com/photo-1578301978018-3005759f48f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
-                    <button class="deploy-btn" id="deployBtn" onclick="event.stopPropagation(); deployToMarket()">🚀 Deploy to Global Network</button>
+            <!-- 模块1：计算思维实验室 (视觉算法拆解) -->
+            <div class="card card-wide reveal">
+                <h3>AIGC Computational Lab <span>CV-ALGO</span></h3>
+                <p id="t-c1">将黑盒化的AI变成透明教具：让学生观察“计算机视觉”如何提取非遗剪纸的边缘特征，直观理解矩阵运算与图像卷积原理。</p>
+                <div class="terminal-box" id="terminal" onclick="runSimulation()" style="cursor: pointer;">
+                    > Click here to load Computer Vision demonstration...<br>
                 </div>
             </div>
-        </div>
 
-        <!-- 模块 2: 全链路性能监控 (体现架构能力) -->
-        <div class="bento-card card-telemetry">
-            <div class="card-header">
-                <span class="card-title" id="telemetryTitle">Shift-Left Telemetry</span>
-                <span class="card-icon">LIVE</span>
+            <!-- 模块2：非遗物理与几何 (STEAM核心) -->
+            <div class="card reveal" style="transition-delay: 0.1s;">
+                <h3>STEAM Digital Twin <span>PHYSICS</span></h3>
+                <p id="t-c2">用科学的眼光拆解传统：对皮影戏运动学、苗绣分形几何进行数字仿真实验。</p>
+                <div style="font-size: 2rem; font-weight: bold; color: var(--accent); margin: 15px 0;">Fractal & Kinematics</div>
+                <div style="color: var(--accent); font-family: var(--font-mono); font-size: 0.8rem; margin-bottom: 20px;">[数学] 与 [物理] 跨学科建模</div>
+                <div class="btn-glow">进入虚拟仿真实验室</div>
             </div>
-            <div>
-                <div class="metric-row"><span class="metric-label">API Latency</span><span class="metric-value good">24ms</span></div>
-                <div class="metric-row"><span class="metric-label">Model Inference</span><span class="metric-value good">1.2s</span></div>
-                <div class="metric-row"><span class="metric-label">Memory Heap</span><span class="metric-value" style="color: #FFB020;">1.4GB / 2GB</span></div>
-                <div class="metric-row"><span class="metric-label">Cache Hit Ratio</span><span class="metric-value good">94.2%</span></div>
-            </div>
-            <div class="chart-mock"><div class="chart-line"></div></div>
-        </div>
 
-        <!-- 模块 3: 商业变现与流量追踪 (体现市场敏锐度) -->
-        <div class="bento-card card-monetization">
-            <div class="card-header">
-                <span class="card-title" id="monetizationTitle">Global Monetization</span>
-                <span class="card-icon">AD-EXCHANGE</span>
+            <!-- 模块3：认知与素养数据追踪 -->
+            <div class="card reveal" style="transition-delay: 0.2s;">
+                <h3>Cognitive Analytics <span>DATA</span></h3>
+                <p id="t-c3">记录学生的探究过程，基于多维度交互数据生成“计算思维”与“科学素养”成长图谱。</p>
+                <div>
+                    <div class="data-row"><span>Algorithmic Logic</span><span style="color: var(--accent);">Level A (优秀)</span></div>
+                    <div class="data-row"><span>Problem Solving</span><span>+ 45%</span></div>
+                    <div class="data-row"><span>AI Literacy</span><span style="color: var(--accent);">92 / 100</span></div>
+                    <div class="data-row"><span>Cross-discipline</span><span>Active</span></div>
+                </div>
             </div>
-            <div style="margin-top: 10px;">
-                <div class="big-number">$142k</div>
-                <div class="trend-up">▲ +24.5% MoM</div>
-                <p class="sub-text" style="margin-top: 15px;" id="adText">Revenue generated for rural artisans via international Ad-network distribution and direct IP sales.</p>
-            </div>
-        </div>
 
-        <!-- 模块 4: 全球节点协同 (体现国际化) -->
-        <div class="bento-card card-global-map">
-            <div class="card-header" style="position: relative; z-index: 2;">
-                <span class="card-title" id="mapTitle">Active Supply Chain Nodes</span>
-                <span class="card-icon">GEO-ROUTING</span>
+            <!-- 模块4：面向 K-12 的开源接口 -->
+            <div class="card reveal" style="transition-delay: 0.3s;">
+                <h3>Open Sandbox API <span>K-12</span></h3>
+                <p id="t-c4">降低编程门槛：封装非遗图像处理API，支持 Python 与图形化拖拽积木（Blockly），鼓励学生自主创作科技作品。</p>
+                <div>
+                    <div class="data-row"><span>Blockly Interface</span><span>图形化积木接入</span></div>
+                    <div class="data-row"><span>Python SDK</span><span>def process_heritage():</span></div>
+                    <div class="data-row"><span>OpenCV Hooks</span><span>边缘检测与二值化</span></div>
+                </div>
             </div>
-            <!-- 模拟世界地图上的发光节点 -->
-            <div class="node" style="top: 40%; left: 70%;" title="Singapore Hub"></div>
-            <div class="node" style="top: 30%; left: 80%; background: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);" title="Shenzhen Manufacturing"></div>
-            <div class="node" style="top: 50%; left: 20%;" title="US Distribution"></div>
-            <div class="node" style="top: 45%; left: 50%;" title="EU Market"></div>
-        </div>
 
+            <!-- 模块5：乡村科学教育共同体 -->
+            <div class="card reveal" style="transition-delay: 0.4s;">
+                <h3>Rural Edu Network <span>NODE</span></h3>
+                <p id="t-c5">打破教育资源壁垒：云端互联城市学校与乡村工坊，构建“线上学科验证 + 线下非遗实践”的数字结对网络。</p>
+                <!-- 纯CSS脉冲连线特效 -->
+                <div style="height: 120px; border: 1px solid #333; border-radius: 10px; position: relative; overflow: hidden; display: flex; align-items: center; justify-content: space-around;">
+                    <div style="text-align: center; z-index: 2;"><div style="width:15px;height:15px;background:var(--accent);border-radius:50%;margin:0 auto 5px;box-shadow:0 0 10px var(--accent);"></div><span style="font-size:12px;">City School</span></div>
+                    <div style="width: 50%; height: 2px; background: linear-gradient(90deg, transparent, var(--accent), transparent); animation: scan 2s linear infinite;"></div>
+                    <div style="text-align: center; z-index: 2;"><div style="width:15px;height:15px;background:#fff;border-radius:50%;margin:0 auto 5px;"></div><span style="font-size:12px;">Rural Hub</span></div>
+                </div>
+            </div>
+
+        </div>
     </main>
 
     <script>
-        // ================= 状态管理与国际化 (i18n) =================
-        let isChinese = false;
+        /* ================= 1. 殿堂级特效：鼠标光晕追踪 ================= */
+        document.getElementById("cards").onmousemove = e => {
+            for(const card of document.getElementsByClassName("card")) {
+                const rect = card.getBoundingClientRect(),
+                      x = e.clientX - rect.left,
+                      y = e.clientY - rect.top;
+                card.style.setProperty("--mouse-x", `${x}px`);
+                card.style.setProperty("--mouse-y", `${y}px`);
+            };
+        }
+
+        /* ================= 2. 页面滚动元素的浮出动画 ================= */
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+
+        document.querySelectorAll('.reveal').forEach((el) => { observer.observe(el); });
+
+        /* ================= 3. 科学教具的算法模拟演示 ================= */
+        async function runSimulation() {
+            const terminal = document.getElementById('terminal');
+            terminal.onclick = null; 
+            terminal.innerHTML = "";
+            const logs = [
+                "[EDU] 正在启动计算思维交互实验...",
+                "[MATH] 导入非遗图像矩阵数据 (Array 512x512)...",
+                "[CV-ALGO] 讲解点：应用高斯滤波去除噪点 (Gaussian Blur)",
+                "[CV-ALGO] 讲解点：运行 Canny 边缘检测算法提取特征轮廓... ██████░░",
+                "[SCIENCE] 分析完成：向学生展示多边形拓扑结构与分形几何规律。",
+                "[OUTPUT] 已生成 Python 示例代码，供学生调用查阅。",
+                "> 实验演示结束，等待学生进行参数调节练习。"
+            ];
+            for (let i = 0; i < logs.length; i++) {
+                await new Promise(r => setTimeout(r, 450 + Math.random() * 300));
+                terminal.innerHTML += `<div>${logs[i]}</div>`;
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+        }
+
+        /* ================= 4. 国际化双语切换 (科普词汇) ================= */
+        let isZh = true;
         const i18n = {
             en: {
-                navLogoText: "Nexus Heritage",
-                heroBadge: "v2.0 · Core AI Engine Online",
-                heroTitle: "<span>Empowering Heritage</span><br>with General AI.",
-                heroDesc: "An enterprise-grade platform connecting rural artisans with global markets through automated AI synthesis, real-time telemetry, and intelligent supply chain routing.",
-                aiTitle: "Multimodal AIGC Engine",
-                uploadText: "Click to upload raw asset / Image mapping",
-                telemetryTitle: "Shift-Left Telemetry",
-                monetizationTitle: "Global Monetization",
-                adText: "Revenue generated for rural artisans via international Ad-network distribution and direct IP sales.",
-                mapTitle: "Active Supply Chain Nodes",
-                deployBtn: "🚀 Deploy to Global Network"
+                "t-badge": "STEAM Education Framework v3.0",
+                "t-title": "Decode Heritage. <br> Code the Future.",
+                "t-desc": "A cross-disciplinary STEAM platform merging computational thinking, AI algorithms, and rural heritage to cultivate scientific literacy for the digital age.",
+                "t-arch": "Educational Architecture",
+                "t-c1": "Turning black-box AI into transparent teaching tools. Let students observe how Computer Vision extracts edges from paper-cutting art, understanding matrix operations.",
+                "t-c2": "Deconstruct tradition scientifically. Digital simulations of shadow puppetry kinematics and Miao embroidery fractal geometry.",
+                "t-c3": "Track student inquiry processes, generating growth maps of computational thinking and STEM literacy based on multidimensional interaction data.",
+                "t-c4": "Lowering programming barriers. Encapsulated API supporting Python and Blockly to encourage student-driven tech creation.",
+                "t-c5": "Breaking resource barriers. Cloud-connecting urban schools with rural workshops to build a digital twin network for offline practice."
             },
             zh: {
-                navLogoText: "Nexus 智遗系统",
-                heroBadge: "v2.0 · 核心通用大模型已上线",
-                heroTitle: "<span>人工智能</span><br>重塑非遗生产力体系",
-                heroDesc: "企业级架构：通过 AIGC 自动化生成、全链路性能监控以及智能全球供应链路由，将乡村手工业与国际大市场无缝对接。",
-                aiTitle: "多模态 AIGC 生成引擎",
-                uploadText: "点击上传素材 / 启动底层视觉映射",
-                telemetryTitle: "全链路监控 (Shift-Left)",
-                monetizationTitle: "全球流量与商业变现",
-                adText: "通过接入国际化广告交易平台与 IP 直售矩阵，为下沉市场手工艺人创造的累计总收益。",
-                mapTitle: "全球智能供应链路由节点",
-                deployBtn: "🚀 一键打包发布至全球网络"
+                "t-badge": "STEAM 跨学科教育框架 v3.0",
+                "t-title": "用科学重构 <br> 非遗之美",
+                "t-desc": "融合计算思维、人工智能算法与非遗文化底蕴。打造面向数字时代的跨学科（STEAM）科学教育与乡村科普协同平台。",
+                "t-arch": "科普教育生态架构",
+                "t-c1": "将黑盒化的AI变成透明教具：让学生观察“计算机视觉”如何提取非遗剪纸的边缘特征，直观理解矩阵运算与图像卷积原理。",
+                "t-c2": "用科学的眼光拆解传统：对皮影戏运动学、苗绣分形几何进行数字仿真实验。",
+                "t-c3": "记录学生的探究过程，基于多维度交互数据生成“计算思维”与“科学素养”成长图谱。",
+                "t-c4": "降低编程门槛：封装非遗图像处理API，支持 Python 与图形化拖拽积木（Blockly），鼓励学生自主创作科技作品。",
+                "t-c5": "打破教育资源壁垒：云端互联城市学校与乡村工坊，构建“线上学科验证 + 线下非遗实践”的数字结对网络。"
             }
         };
 
-        function toggleLanguage() {
-            isChinese = !isChinese;
-            const lang = isChinese ? i18n.zh : i18n.en;
-            
-            // 批量更新DOM
-            Object.keys(lang).forEach(id => {
-                const el = document.getElementById(id);
-                if(el) el.innerHTML = lang[id]; // 使用innerHTML支持 <span> 标签
-            });
-            document.getElementById('langBtn').innerText = isChinese ? "中文 / EN" : "EN / 中文";
-        }
-
-        // ================= 核心业务逻辑：模拟企业级 AI 工作流 =================
-        async function startGeneration() {
-            const workspace = document.getElementById('workspace');
-            const uploadUI = document.getElementById('uploadUI');
-            const terminal = document.getElementById('terminal');
-            const resultView = document.getElementById('resultView');
-
-            // 禁用再次点击
-            workspace.onclick = null;
-            uploadUI.style.display = 'none';
-            terminal.style.display = 'block';
-            terminal.innerHTML = "";
-
-            const logSequence = isChinese ? [
-                "SYSTEM: 初始化 GPU 算力集群...",
-                "INFO: 验证用户权限令牌... [OK]",
-                "PROCESS: 加载潜空间扩散模型 (Heritage_v4.ckpt)",
-                "TELEMETRY: 监控指标接入正常, 内存分配: 1.4GB",
-                "COMPUTE: 执行边缘特征提取与 Canny 预处理...",
-                "COMPUTE: 风格迁移演算中 [██████░░░░] 60%",
-                "COMPUTE: 正在生成高清纹理与 SVG 矢量化...",
-                "SUCCESS: 资产渲染完毕，耗时 1240ms",
-                "SYSTEM: 准备输出缓冲..."
-            ] : [
-                "SYSTEM: Initializing GPU Cluster...",
-                "INFO: Validating Auth Token... [OK]",
-                "PROCESS: Loading Latent Diffusion Model (Heritage_v4.ckpt)",
-                "TELEMETRY: Hooks injected, Memory allocated: 1.4GB",
-                "COMPUTE: Executing Edge Detection & Canny Pre-processing...",
-                "COMPUTE: Running Style Transfer GAN [██████░░░░] 60%",
-                "COMPUTE: Vectorizing to SVG payload...",
-                "SUCCESS: Asset rendered in 1240ms",
-                "SYSTEM: Preparing output buffer..."
-            ];
-
-            // 模拟异步终端输出
-            for (let i = 0; i < logSequence.length; i++) {
-                await new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 200));
-                terminal.innerHTML += `> ${logSequence[i]}<br>`;
-                terminal.scrollTop = terminal.scrollHeight;
+        document.getElementById('langToggle').addEventListener('click', () => {
+            isZh = !isZh;
+            const lang = isZh ? i18n.zh : i18n.en;
+            for (const key in lang) {
+                document.getElementById(key).innerHTML = lang[key];
             }
-
-            // 完成后切换到结果视图
-            setTimeout(() => {
-                terminal.style.display = 'none';
-                resultView.style.display = 'block';
-            }, 800);
-        }
-
-        function deployToMarket() {
-            const msg = isChinese 
-                ? "【部署成功】\n\n数字资产已通过 CI/CD 流水线打包。\n生产指令已下发至深圳制造中枢与乡村工艺协作网。\n\n自动化商业变现模块（Ad-Network）已同步开启。"
-                : "[DEPLOYMENT SUCCESSFUL]\n\nDigital asset packaged via CI/CD pipeline.\nProduction commands routed to Shenzhen Hub & Rural networks.\n\nAd-Network monetization module activated.";
-            alert(msg);
-            
-            // 重置状态
-            document.getElementById('resultView').style.display = 'none';
-            document.getElementById('uploadUI').style.display = 'flex';
-            document.getElementById('workspace').onclick = startGeneration;
-        }
+            document.getElementById('langToggle').innerText = isZh ? "中 / EN" : "EN / 中文";
+        });
     </script>
 </body>
 </html>
