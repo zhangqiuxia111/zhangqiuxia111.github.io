@@ -1,405 +1,337 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>智绘乡遗 | AI驱动的非遗数字引擎</title>
-    <!-- 引入思源宋体，增加国风高级感 -->
-    <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&display=swap" rel="stylesheet">
+    <title>Nexus Heritage | Global AI Collaborative Engine</title>
     <style>
+        /* ================= 核心系统变量 (Enterprise Design System) ================= */
         :root {
-            --bg-dark: #0a0a0c;
-            --gold: #d4af37;
-            --gold-light: #f3e5ab;
-            --accent-red: #8b0000;
-            --neon-cyan: #00f3ff;
-            --glass-bg: rgba(20, 20, 25, 0.6);
-            --glass-border: rgba(255, 255, 255, 0.1);
+            --bg-base: #050505;
+            --bg-surface: #121212;
+            --bg-surface-hover: #1a1a1a;
+            --border-color: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: #888888;
+            --accent-blue: #0066FF;
+            --accent-purple: #8A2BE2;
+            --accent-green: #00F5A0;
+            --font-sans: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            --font-mono: 'JetBrains Mono', 'Courier New', monospace;
+            --radius-lg: 24px;
+            --radius-md: 16px;
+            --transition-smooth: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
-        * {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 0;
-        }
-
+        * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-            background-color: var(--bg-dark);
-            color: #fff;
-            overflow-x: hidden;
-            background-image: 
-                radial-gradient(circle at 15% 50%, rgba(139, 0, 0, 0.15), transparent 25%),
-                radial-gradient(circle at 85% 30%, rgba(212, 175, 55, 0.1), transparent 25%);
-            background-attachment: fixed;
+            font-family: var(--font-sans); background-color: var(--bg-base);
+            color: var(--text-primary); line-height: 1.6; overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
         }
 
-        /* 字体渐变与特殊排版 */
-        .title-font {
-            font-family: 'Noto Serif SC', serif;
+        /* 背景流光特效 */
+        .ambient-glow {
+            position: fixed; top: -20%; left: -10%; width: 50vw; height: 50vw;
+            background: radial-gradient(circle, rgba(0, 102, 255, 0.15) 0%, transparent 60%);
+            filter: blur(80px); z-index: -1; pointer-events: none;
         }
-        .gradient-text-gold {
-            background: linear-gradient(135deg, var(--gold-light), var(--gold), #aa7c11);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-        }
-        .gradient-text-tech {
-            background: linear-gradient(135deg, #fff, var(--neon-cyan));
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+        .ambient-glow.right {
+            top: 40%; left: 60%;
+            background: radial-gradient(circle, rgba(138, 43, 226, 0.1) 0%, transparent 60%);
         }
 
-        /* 顶部导航与英雄区 */
-        header {
-            min-height: 100vh;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            text-align: center;
-            padding: 0 20px;
+        /* 顶部导航 - 国际化与控制台风格 */
+        nav {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 20px 40px; border-bottom: 1px solid var(--border-color);
+            background: rgba(5, 5, 5, 0.8); backdrop-filter: blur(20px);
+            position: sticky; top: 0; z-index: 100;
         }
+        .logo { font-size: 1.2rem; font-weight: 700; letter-spacing: -0.5px; display: flex; align-items: center; gap: 10px;}
+        .logo-icon { width: 24px; height: 24px; background: linear-gradient(135deg, var(--accent-blue), var(--accent-purple)); border-radius: 6px; }
+        .nav-controls { display: flex; gap: 20px; align-items: center; }
+        .lang-switch {
+            background: transparent; color: var(--text-secondary); border: 1px solid var(--border-color);
+            padding: 6px 12px; border-radius: 20px; cursor: pointer; font-size: 0.85rem;
+            transition: var(--transition-smooth);
+        }
+        .lang-switch:hover { color: var(--text-primary); border-color: var(--text-secondary); }
+
+        /* 英雄区域 (Hero Section) */
+        header { padding: 100px 40px 60px; text-align: center; max-width: 1000px; margin: 0 auto; }
+        .badge {
+            display: inline-block; padding: 6px 14px; border-radius: 100px;
+            background: rgba(255,255,255,0.05); border: 1px solid var(--border-color);
+            font-size: 0.8rem; color: var(--text-secondary); margin-bottom: 24px;
+            font-family: var(--font-mono);
+        }
+        h1 { font-size: 4.5rem; line-height: 1.1; letter-spacing: -2px; margin-bottom: 24px; }
+        h1 span {
+            background: linear-gradient(to right, #fff, #777);
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+        }
+        .hero-desc { font-size: 1.2rem; color: var(--text-secondary); max-width: 600px; margin: 0 auto; }
+
+        /* ================= 核心工作台：Bento Box 网格系统 ================= */
+        .bento-grid {
+            display: grid; padding: 0 40px 100px; max-width: 1400px; margin: 0 auto;
+            grid-template-columns: repeat(4, 1fr); grid-auto-rows: minmax(300px, auto); gap: 20px;
+        }
+        .bento-card {
+            background: var(--bg-surface); border: 1px solid var(--border-color);
+            border-radius: var(--radius-lg); padding: 30px; position: relative; overflow: hidden;
+            transition: var(--transition-smooth);
+            display: flex; flex-direction: column;
+        }
+        .bento-card:hover { border-color: rgba(255,255,255,0.2); transform: translateY(-2px); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .card-title { font-size: 1rem; font-weight: 600; color: var(--text-primary); }
+        .card-icon { color: var(--text-secondary); font-family: var(--font-mono); font-size: 0.8rem; }
+
+        /* Card 1: 核心 AI 引擎 (跨越 2x2 网格) */
+        .card-ai-engine { grid-column: span 2; grid-row: span 2; }
+        .workspace-area {
+            flex: 1; border: 1px dashed var(--border-color); border-radius: var(--radius-md);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            background: rgba(0,0,0,0.2); cursor: pointer; transition: var(--transition-smooth); position: relative;
+        }
+        .workspace-area:hover { background: rgba(255,255,255,0.02); border-color: var(--accent-blue); }
         
-        /* 动态水墨背景图 (使用Unsplash的高清图并加上暗色遮罩) */
-        .hero-bg {
-            position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: url('https://images.unsplash.com/photo-1547981609-4b6bfe67ca0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=2000&q=80') center/cover;
-            opacity: 0.3;
-            z-index: -1;
-            filter: contrast(1.2) grayscale(0.5);
+        /* 终端风格的进度控制台 */
+        .terminal {
+            display: none; width: 100%; height: 100%; background: #000; border-radius: var(--radius-md);
+            padding: 20px; font-family: var(--font-mono); font-size: 0.85rem; color: #00F5A0;
+            overflow-y: auto; text-align: left; box-shadow: inset 0 0 20px rgba(0,245,160,0.1);
         }
-        .hero-bg::after {
-            content: ''; position: absolute;
-            top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(to bottom, transparent, var(--bg-dark));
+        .result-view {
+            display: none; width: 100%; height: 100%; border-radius: var(--radius-md);
+            background-size: cover; background-position: center; position: relative;
         }
-
-        h1 {
-            font-size: 6rem;
-            letter-spacing: 1.5rem;
-            margin-bottom: 20px;
-            text-shadow: 0 0 40px rgba(212, 175, 55, 0.3);
-            margin-left: 1.5rem; /* 补偿letter-spacing引起的居中偏移 */
-        }
-        .subtitle {
-            font-size: 1.5rem;
-            letter-spacing: 4px;
-            color: #aaa;
-            margin-bottom: 50px;
-            font-weight: 300;
+        .deploy-btn {
+            position: absolute; bottom: 20px; right: 20px; background: #fff; color: #000;
+            border: none; padding: 10px 20px; border-radius: 8px; font-weight: 600; cursor: pointer;
         }
 
-        /* 毛玻璃容器 */
-        .glass-panel {
-            background: var(--glass-bg);
-            backdrop-filter: blur(16px);
-            -webkit-backdrop-filter: blur(16px);
-            border: 1px solid var(--glass-border);
-            border-radius: 24px;
-            box-shadow: 0 30px 60px rgba(0,0,0,0.5);
-        }
+        /* Card 2: 全链路性能监控 (Shift-Left Telemetry) */
+        .card-telemetry { grid-column: span 1; grid-row: span 1; }
+        .metric-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-family: var(--font-mono); font-size: 0.85rem;}
+        .metric-label { color: var(--text-secondary); }
+        .metric-value.good { color: var(--accent-green); }
+        .chart-mock { height: 60px; width: 100%; background: repeating-linear-gradient(90deg, transparent, transparent 10px, rgba(255,255,255,0.05) 10px, rgba(255,255,255,0.05) 20px); margin-top: auto; border-bottom: 1px solid var(--accent-blue); position: relative;}
+        .chart-line { position: absolute; bottom: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(to top right, transparent 50%, var(--accent-blue) 50.5%, transparent 51%); opacity: 0.5; }
 
-        /* 数据看板 */
-        .stats-container {
-            display: flex;
-            gap: 40px;
-            padding: 30px 60px;
-            margin-top: -50px;
-            z-index: 10;
-        }
-        .stat-item {
-            text-align: center;
-        }
-        .stat-num {
-            font-size: 3rem;
-            font-weight: bold;
-            font-family: 'Courier New', Courier, monospace;
-            text-shadow: 0 0 15px rgba(0, 243, 255, 0.4);
-        }
-        .stat-label {
-            font-size: 0.9rem;
-            color: #888;
-            letter-spacing: 2px;
-            margin-top: 5px;
-        }
-
-        /* 核心工作区：AI矩阵 */
-        .main-content {
-            max-width: 1200px;
-            margin: 100px auto;
-            padding: 0 20px;
-        }
-        .section-header {
-            text-align: center;
-            margin-bottom: 60px;
-        }
-        .section-header h2 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-        }
-        .section-header p {
-            color: #888;
-        }
-
-        .ai-workspace {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 40px;
-            padding: 40px;
-            position: relative;
-        }
-
-        /* 酷炫上传框 */
-        .upload-area {
-            border: 2px dashed rgba(212, 175, 55, 0.3);
-            border-radius: 16px;
-            height: 400px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.4s ease;
-            position: relative;
-            overflow: hidden;
-        }
-        .upload-area:hover {
-            border-color: var(--gold);
-            background: rgba(212, 175, 55, 0.05);
-            box-shadow: 0 0 30px rgba(212, 175, 55, 0.1) inset;
-        }
-        .upload-icon {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            opacity: 0.8;
-        }
-
-        /* AI 科技感扫描动画 */
-        .scanner-container {
-            display: none;
-            width: 100%;
-            height: 100%;
-            position: absolute;
-            top: 0; left: 0;
-            background: url('https://images.unsplash.com/photo-1544885935-98dd03b09034?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80') center/cover;
-        }
-        .scan-line {
-            width: 100%;
-            height: 5px;
-            background: var(--neon-cyan);
-            box-shadow: 0 0 20px 5px var(--neon-cyan);
-            position: absolute;
-            top: 0;
-            animation: scan 2s linear infinite;
-        }
-        @keyframes scan {
-            0% { top: 0; }
-            50% { top: 100%; }
-            100% { top: 0; }
-        }
-        .processing-text {
-            position: absolute;
-            bottom: 20px;
-            left: 20px;
-            font-family: monospace;
-            color: var(--neon-cyan);
-            background: rgba(0,0,0,0.7);
-            padding: 5px 10px;
-            border-radius: 4px;
-        }
-
-        /* 结果展示区 */
-        .result-area {
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-        }
-        .artwork-frame {
-            width: 320px;
-            height: 320px;
-            border-radius: 12px;
-            background: #111;
-            position: relative;
-            box-shadow: 0 0 0 1px rgba(255,255,255,0.1), 0 20px 40px rgba(0,0,0,0.8);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            overflow: hidden;
-        }
-        .artwork-img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            opacity: 0.2;
-            transition: opacity 1s ease;
-        }
+        /* Card 3: 全球流量与变现分析 (Monetization & Ads Growth) */
+        .card-monetization { grid-column: span 1; grid-row: span 1; }
+        .big-number { font-size: 2.5rem; font-weight: 700; margin-bottom: 5px; }
+        .trend-up { color: var(--accent-green); font-size: 0.85rem; font-family: var(--font-mono);}
+        .sub-text { color: var(--text-secondary); font-size: 0.85rem; }
         
-        .btn-cyber {
-            margin-top: 40px;
-            padding: 15px 40px;
-            background: transparent;
-            color: var(--gold);
-            font-size: 1.1rem;
-            letter-spacing: 2px;
-            border: 1px solid var(--gold);
-            border-radius: 30px;
-            cursor: pointer;
-            position: relative;
-            overflow: hidden;
-            transition: 0.3s;
-            opacity: 0;
-            transform: translateY(20px);
-        }
-        .btn-cyber:hover {
-            background: var(--gold);
-            color: #000;
-            box-shadow: 0 0 20px rgba(212, 175, 55, 0.6);
-        }
+        /* Card 4: 国际化供应链地图 */
+        .card-global-map { grid-column: span 2; grid-row: span 1; background: url('data:image/svg+xml;utf8,<svg width="100%" height="100%" xmlns="http://www.w3.org/2000/svg"><pattern id="dots" x="0" y="0" width="20" height="20" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1" fill="rgba(255,255,255,0.1)"/></pattern><rect x="0" y="0" width="100%" height="100%" fill="url(%23dots)"/></svg>') var(--bg-surface); }
+        .node { width: 12px; height: 12px; background: var(--accent-blue); border-radius: 50%; position: absolute; box-shadow: 0 0 15px var(--accent-blue); }
+        .node::after { content: ''; position: absolute; top: -4px; left: -4px; right: -4px; bottom: -4px; border-radius: 50%; border: 1px solid var(--accent-blue); animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { transform: scale(1); opacity: 1; } 100% { transform: scale(2.5); opacity: 0; } }
 
-        /* 响应式 */
-        @media (max-width: 768px) {
-            h1 { font-size: 3rem; letter-spacing: 0.5rem; margin-left: 0.5rem;}
-            .ai-workspace { grid-template-columns: 1fr; }
-            .stats-container { flex-direction: column; gap: 20px; }
-        }
+        @media (max-width: 1024px) { .bento-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 768px) { .bento-grid { grid-template-columns: 1fr; } h1 { font-size: 3rem; } }
     </style>
 </head>
 <body>
 
-    <header>
-        <div class="hero-bg"></div>
-        <h1 class="title-font gradient-text-gold">智绘乡遗</h1>
-        <p class="subtitle">计算思维 × 传统非遗 × 乡村振兴</p>
-        
-        <div class="glass-panel stats-container">
-            <div class="stat-item">
-                <div class="stat-num gradient-text-tech" id="stat1">0</div>
-                <div class="stat-label">已赋能手工艺人</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num gradient-text-tech" id="stat2">0</div>
-                <div class="stat-label">AI生成创意总数</div>
-            </div>
-            <div class="stat-item">
-                <div class="stat-num gradient-text-tech">￥<span id="stat3">0</span></div>
-                <div class="stat-label">累计助农增收(元)</div>
-            </div>
+    <div class="ambient-glow"></div>
+    <div class="ambient-glow right"></div>
+
+    <nav>
+        <div class="logo">
+            <div class="logo-icon"></div>
+            <span id="navLogoText">Nexus Heritage</span>
         </div>
+        <div class="nav-controls">
+            <button class="lang-switch" onclick="toggleLanguage()" id="langBtn">EN / 中文</button>
+            <div style="width: 32px; height: 32px; border-radius: 50%; background: #333; border: 1px solid #555;"></div>
+        </div>
+    </nav>
+
+    <header>
+        <div class="badge" id="heroBadge">v2.0 · Core AI Engine Online</div>
+        <h1 id="heroTitle"><span>Empowering Heritage</span><br>with General AI.</h1>
+        <p class="hero-desc" id="heroDesc">An enterprise-grade platform connecting rural artisans with global markets through automated AI synthesis, real-time telemetry, and intelligent supply chain routing.</p>
     </header>
 
-    <main class="main-content">
-        <div class="section-header">
-            <h2 class="title-font gradient-text-gold">核心引擎：AIGC 非遗风格潜空间映射</h2>
-            <p>基于机器视觉与深度学习，将现代图像解构重组为传统非遗文化图样</p>
-        </div>
+    <main class="bento-grid">
+        
+        <!-- 模块 1: 核心 AIGC 引擎 (工程化流程) -->
+        <div class="bento-card card-ai-engine">
+            <div class="card-header">
+                <span class="card-title" id="aiTitle">Multimodal AIGC Engine</span>
+                <span class="card-icon">GPU-CLUSTER-01</span>
+            </div>
+            
+            <div class="workspace-area" id="workspace" onclick="startGeneration()">
+                <div id="uploadUI">
+                    <svg width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" style="margin-bottom: 20px; color: var(--text-secondary);">
+                        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M17 8l-5-5-5 5M12 3v12"/>
+                    </svg>
+                    <p style="color: var(--text-secondary); font-weight: 500;" id="uploadText">Click to upload raw asset / Image mapping</p>
+                </div>
 
-        <div class="glass-panel ai-workspace">
-            <!-- 左侧：上传与处理 -->
-            <div class="upload-area" id="uploadArea" onclick="document.getElementById('fileInput').click()">
-                <div class="upload-icon">💠</div>
-                <p style="color: #aaa; letter-spacing: 1px;">点击上传图像，启动AI视觉引擎</p>
-                <input type="file" id="fileInput" style="display: none;" accept="image/*" onchange="startCyberScan()">
+                <!-- 极客风终端输出 -->
+                <div class="terminal" id="terminal"></div>
                 
-                <!-- 科技感扫描层 (默认隐藏) -->
-                <div class="scanner-container" id="scanner">
-                    <div class="scan-line"></div>
-                    <div class="processing-text" id="logText">INITIATING NEURAL NETWORK...</div>
+                <!-- 结果与部署 -->
+                <div class="result-view" id="resultView" style="background-image: url('https://images.unsplash.com/photo-1578301978018-3005759f48f7?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80');">
+                    <button class="deploy-btn" id="deployBtn" onclick="event.stopPropagation(); deployToMarket()">🚀 Deploy to Global Network</button>
                 </div>
             </div>
+        </div>
 
-            <!-- 右侧：生成结果 -->
-            <div class="result-area">
-                <div class="artwork-frame">
-                    <div style="position: absolute; color: #444; font-family: monospace;" id="placeholderText">AWAITING DATA INPUT</div>
-                    <!-- 结果图片：默认是一张好看的非遗剪纸，初始透明度极低 -->
-                    <img src="https://images.unsplash.com/photo-1616046229478-9901c5536a45?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80" class="artwork-img" id="resultImg" alt="AI Generated Artwork">
-                </div>
-                
-                <button class="btn-cyber title-font" id="orderBtn" onclick="submitOrder()">将算力化作实体 ▹ 一键助农定制</button>
+        <!-- 模块 2: 全链路性能监控 (体现架构能力) -->
+        <div class="bento-card card-telemetry">
+            <div class="card-header">
+                <span class="card-title" id="telemetryTitle">Shift-Left Telemetry</span>
+                <span class="card-icon">LIVE</span>
+            </div>
+            <div>
+                <div class="metric-row"><span class="metric-label">API Latency</span><span class="metric-value good">24ms</span></div>
+                <div class="metric-row"><span class="metric-label">Model Inference</span><span class="metric-value good">1.2s</span></div>
+                <div class="metric-row"><span class="metric-label">Memory Heap</span><span class="metric-value" style="color: #FFB020;">1.4GB / 2GB</span></div>
+                <div class="metric-row"><span class="metric-label">Cache Hit Ratio</span><span class="metric-value good">94.2%</span></div>
+            </div>
+            <div class="chart-mock"><div class="chart-line"></div></div>
+        </div>
+
+        <!-- 模块 3: 商业变现与流量追踪 (体现市场敏锐度) -->
+        <div class="bento-card card-monetization">
+            <div class="card-header">
+                <span class="card-title" id="monetizationTitle">Global Monetization</span>
+                <span class="card-icon">AD-EXCHANGE</span>
+            </div>
+            <div style="margin-top: 10px;">
+                <div class="big-number">$142k</div>
+                <div class="trend-up">▲ +24.5% MoM</div>
+                <p class="sub-text" style="margin-top: 15px;" id="adText">Revenue generated for rural artisans via international Ad-network distribution and direct IP sales.</p>
             </div>
         </div>
+
+        <!-- 模块 4: 全球节点协同 (体现国际化) -->
+        <div class="bento-card card-global-map">
+            <div class="card-header" style="position: relative; z-index: 2;">
+                <span class="card-title" id="mapTitle">Active Supply Chain Nodes</span>
+                <span class="card-icon">GEO-ROUTING</span>
+            </div>
+            <!-- 模拟世界地图上的发光节点 -->
+            <div class="node" style="top: 40%; left: 70%;" title="Singapore Hub"></div>
+            <div class="node" style="top: 30%; left: 80%; background: var(--accent-purple); box-shadow: 0 0 15px var(--accent-purple);" title="Shenzhen Manufacturing"></div>
+            <div class="node" style="top: 50%; left: 20%;" title="US Distribution"></div>
+            <div class="node" style="top: 45%; left: 50%;" title="EU Market"></div>
+        </div>
+
     </main>
 
     <script>
-        // 1. 酷炫的数字滚动动画 (一进页面就显得很有数据感)
-        function animateValue(id, start, end, duration) {
-            let obj = document.getElementById(id);
-            let startTimestamp = null;
-            const step = (timestamp) => {
-                if (!startTimestamp) startTimestamp = timestamp;
-                const progress = Math.min((timestamp - startTimestamp) / duration, 1);
-                // 增加数字的千位分隔符格式化
-                obj.innerHTML = Math.floor(progress * (end - start) + start).toLocaleString();
-                if (progress < 1) {
-                    window.requestAnimationFrame(step);
-                }
-            };
-            window.requestAnimationFrame(step);
-        }
-
-        // 页面加载完成后触发数字滚动
-        window.onload = () => {
-            animateValue("stat1", 0, 3402, 2000);
-            animateValue("stat2", 0, 89145, 2500);
-            animateValue("stat3", 0, 1254800, 3000);
+        // ================= 状态管理与国际化 (i18n) =================
+        let isChinese = false;
+        const i18n = {
+            en: {
+                navLogoText: "Nexus Heritage",
+                heroBadge: "v2.0 · Core AI Engine Online",
+                heroTitle: "<span>Empowering Heritage</span><br>with General AI.",
+                heroDesc: "An enterprise-grade platform connecting rural artisans with global markets through automated AI synthesis, real-time telemetry, and intelligent supply chain routing.",
+                aiTitle: "Multimodal AIGC Engine",
+                uploadText: "Click to upload raw asset / Image mapping",
+                telemetryTitle: "Shift-Left Telemetry",
+                monetizationTitle: "Global Monetization",
+                adText: "Revenue generated for rural artisans via international Ad-network distribution and direct IP sales.",
+                mapTitle: "Active Supply Chain Nodes",
+                deployBtn: "🚀 Deploy to Global Network"
+            },
+            zh: {
+                navLogoText: "Nexus 智遗系统",
+                heroBadge: "v2.0 · 核心通用大模型已上线",
+                heroTitle: "<span>人工智能</span><br>重塑非遗生产力体系",
+                heroDesc: "企业级架构：通过 AIGC 自动化生成、全链路性能监控以及智能全球供应链路由，将乡村手工业与国际大市场无缝对接。",
+                aiTitle: "多模态 AIGC 生成引擎",
+                uploadText: "点击上传素材 / 启动底层视觉映射",
+                telemetryTitle: "全链路监控 (Shift-Left)",
+                monetizationTitle: "全球流量与商业变现",
+                adText: "通过接入国际化广告交易平台与 IP 直售矩阵，为下沉市场手工艺人创造的累计总收益。",
+                mapTitle: "全球智能供应链路由节点",
+                deployBtn: "🚀 一键打包发布至全球网络"
+            }
         };
 
-        // 2. 极具科技感的 AI 图像处理动画
-        function startCyberScan() {
-            const uploadBox = document.getElementById('uploadArea');
-            const scanner = document.getElementById('scanner');
-            const logText = document.getElementById('logText');
-            const resultImg = document.getElementById('resultImg');
-            const placeholder = document.getElementById('placeholderText');
-            const btn = document.getElementById('orderBtn');
-
-            // 锁定上传点击
-            uploadBox.onclick = null;
+        function toggleLanguage() {
+            isChinese = !isChinese;
+            const lang = isChinese ? i18n.zh : i18n.en;
             
-            // 显示扫描特效
-            scanner.style.display = 'block';
-            placeholder.innerText = "PROCESSING LATENT SPACE...";
-
-            // 模拟算法日志输出
-            const logs = [
-                "EXTRACTING FEATURES...",
-                "RUNNING CANNY EDGE DETECTION...",
-                "APPLYING STYLE TRANSFER GAN...",
-                "OPTIMIZING SVG PATHS...",
-                "RENDER COMPLETE."
-            ];
-            
-            let i = 0;
-            const interval = setInterval(() => {
-                logText.innerText = `> ${logs[i]}`;
-                i++;
-                if(i >= logs.length) {
-                    clearInterval(interval);
-                    
-                    // 扫描结束，展示特效
-                    setTimeout(() => {
-                        scanner.style.display = 'none';
-                        placeholder.style.display = 'none';
-                        resultImg.style.opacity = '1'; // 图片亮起
-                        resultImg.style.filter = 'drop-shadow(0 0 20px rgba(212, 175, 55, 0.5))';
-                        
-                        // 按钮浮现动画
-                        btn.style.opacity = '1';
-                        btn.style.transform = 'translateY(0)';
-                        
-                        // 恢复上传功能以便再次体验
-                        uploadBox.onclick = () => document.getElementById('fileInput').click();
-                    }, 500);
-                }
-            }, 800); // 调整日志切换速度
+            // 批量更新DOM
+            Object.keys(lang).forEach(id => {
+                const el = document.getElementById(id);
+                if(el) el.innerHTML = lang[id]; // 使用innerHTML支持 <span> 标签
+            });
+            document.getElementById('langBtn').innerText = isChinese ? "中文 / EN" : "EN / 中文";
         }
 
-        // 3. 助农订单弹窗
-        function submitOrder() {
-            alert(`【系统级指令通过】\n\n数字创意资产已打包。\n通过边缘计算节点，已将生产图纸发送至：\n📍 陕西省华县皮影非遗工坊\n\n预计手艺人将在 48 小时内完成手工雕刻。\n感谢您对中国乡村非遗传承的算力支持。`);
+        // ================= 核心业务逻辑：模拟企业级 AI 工作流 =================
+        async function startGeneration() {
+            const workspace = document.getElementById('workspace');
+            const uploadUI = document.getElementById('uploadUI');
+            const terminal = document.getElementById('terminal');
+            const resultView = document.getElementById('resultView');
+
+            // 禁用再次点击
+            workspace.onclick = null;
+            uploadUI.style.display = 'none';
+            terminal.style.display = 'block';
+            terminal.innerHTML = "";
+
+            const logSequence = isChinese ? [
+                "SYSTEM: 初始化 GPU 算力集群...",
+                "INFO: 验证用户权限令牌... [OK]",
+                "PROCESS: 加载潜空间扩散模型 (Heritage_v4.ckpt)",
+                "TELEMETRY: 监控指标接入正常, 内存分配: 1.4GB",
+                "COMPUTE: 执行边缘特征提取与 Canny 预处理...",
+                "COMPUTE: 风格迁移演算中 [██████░░░░] 60%",
+                "COMPUTE: 正在生成高清纹理与 SVG 矢量化...",
+                "SUCCESS: 资产渲染完毕，耗时 1240ms",
+                "SYSTEM: 准备输出缓冲..."
+            ] : [
+                "SYSTEM: Initializing GPU Cluster...",
+                "INFO: Validating Auth Token... [OK]",
+                "PROCESS: Loading Latent Diffusion Model (Heritage_v4.ckpt)",
+                "TELEMETRY: Hooks injected, Memory allocated: 1.4GB",
+                "COMPUTE: Executing Edge Detection & Canny Pre-processing...",
+                "COMPUTE: Running Style Transfer GAN [██████░░░░] 60%",
+                "COMPUTE: Vectorizing to SVG payload...",
+                "SUCCESS: Asset rendered in 1240ms",
+                "SYSTEM: Preparing output buffer..."
+            ];
+
+            // 模拟异步终端输出
+            for (let i = 0; i < logSequence.length; i++) {
+                await new Promise(resolve => setTimeout(resolve, Math.random() * 400 + 200));
+                terminal.innerHTML += `> ${logSequence[i]}<br>`;
+                terminal.scrollTop = terminal.scrollHeight;
+            }
+
+            // 完成后切换到结果视图
+            setTimeout(() => {
+                terminal.style.display = 'none';
+                resultView.style.display = 'block';
+            }, 800);
+        }
+
+        function deployToMarket() {
+            const msg = isChinese 
+                ? "【部署成功】\n\n数字资产已通过 CI/CD 流水线打包。\n生产指令已下发至深圳制造中枢与乡村工艺协作网。\n\n自动化商业变现模块（Ad-Network）已同步开启。"
+                : "[DEPLOYMENT SUCCESSFUL]\n\nDigital asset packaged via CI/CD pipeline.\nProduction commands routed to Shenzhen Hub & Rural networks.\n\nAd-Network monetization module activated.";
+            alert(msg);
+            
+            // 重置状态
+            document.getElementById('resultView').style.display = 'none';
+            document.getElementById('uploadUI').style.display = 'flex';
+            document.getElementById('workspace').onclick = startGeneration;
         }
     </script>
 </body>
